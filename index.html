@@ -1,0 +1,906 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>科技書閣 · 才能專校</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', 'Orbitron', system-ui, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0b1a2e, #030812);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+
+        /* 主視窗 -- 科技玻璃效果 */
+        .holo-panel {
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            min-height: 600px;
+            background: rgba(8, 20, 36, 0.75);
+            backdrop-filter: blur(14px) saturate(180%);
+            -webkit-backdrop-filter: blur(14px) saturate(180%);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 42px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.2s ease;
+        }
+
+        /* 畫面切換容器 */
+        .view {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            color: #bbf0ff;
+        }
+
+        .hidden-view {
+            display: none !important;
+        }
+
+        /* ========== 書架畫面 ========== */
+        .shelf-header {
+            padding: 16px 8px 8px;
+            border-bottom: 1px solid #00ffff33;
+            text-shadow: 0 0 8px cyan;
+            letter-spacing: 2px;
+            font-weight: 400;
+            font-size: 1.8rem;
+        }
+
+        .shelf-grid {
+            flex: 1;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            padding: 32px 16px;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #00aaff #001822;
+        }
+
+        .shelf-grid::-webkit-scrollbar {
+            width: 8px;
+        }
+        .shelf-grid::-webkit-scrollbar-track {
+            background: #001822;
+            border-radius: 20px;
+        }
+        .shelf-grid::-webkit-scrollbar-thumb {
+            background: #0cf;
+            border-radius: 20px;
+            box-shadow: inset 0 0 6px #00e0ff;
+        }
+
+        /* 科技卡片 -- 只有一本書 */
+        .story-card {
+            width: 260px;
+            background: rgba(0, 30, 50, 0.7);
+            backdrop-filter: blur(8px);
+            border: 1px solid #0cf3;
+            border-radius: 32px;
+            padding: 32px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 0 20px #00b8ff33;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .story-card:hover {
+            border-color: #0cf;
+            box-shadow: 0 0 35px cyan, inset 0 0 20px #00aaff40;
+            transform: translateY(-4px) scale(1.02);
+            background: rgba(0, 50, 70, 0.8);
+        }
+
+        .story-icon {
+            font-size: 64px;
+            filter: drop-shadow(0 0 12px cyan);
+            line-height: 1;
+        }
+
+        .story-title {
+            font-size: 2rem;
+            font-weight: 500;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px cyan;
+        }
+
+        .story-sub {
+            color: #9fc;
+            font-size: 1rem;
+            opacity: 0.8;
+            border-top: 1px dashed #0cf5;
+            padding-top: 12px;
+        }
+
+        /* ========== 閱讀器畫面 ========== */
+        .reader-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 8px 16px;
+            border-bottom: 1px solid #0cf3;
+            flex-wrap: wrap;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: 1px solid #0cf7;
+            color: #0cf;
+            font-size: 2rem;
+            line-height: 1;
+            width: 50px;
+            height: 50px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 0 12px #0cf5;
+        }
+        .back-btn:hover {
+            background: #0cf3;
+            border-color: cyan;
+            box-shadow: 0 0 30px cyan;
+            transform: scale(1.05);
+        }
+
+        .reader-title-area {
+            flex: 1;
+        }
+        .reader-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+            text-shadow: 0 0 12px #0cf;
+            letter-spacing: 2px;
+        }
+        .reader-author {
+            font-size: 1.1rem;
+            color: #aaffee;
+            text-shadow: 0 0 8px #0cf;
+            opacity: 0.9;
+        }
+
+        .author-tool-btn {
+            background: #0cf1;
+            border: 1px solid #f0f;
+            color: #f0f;
+            font-size: 1.8rem;
+            padding: 8px 16px;
+            border-radius: 60px;
+            box-shadow: 0 0 18px #f0f7, inset 0 0 8px #f0f5;
+            cursor: pointer;
+            transition: 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(4px);
+        }
+        .author-tool-btn:hover {
+            background: #f0f3;
+            border-color: cyan;
+            color: white;
+            box-shadow: 0 0 30px magenta;
+        }
+
+        /* 小說內容區域 */
+        .reader-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 28px 20px;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            white-space: pre-wrap;
+            word-break: break-word;
+            text-align: justify;
+            background: #02131e30;
+            border-radius: 28px;
+            margin: 16px 0;
+            border: 1px solid #0cf2;
+            box-shadow: inset 0 0 50px #001a29, 0 0 20px #00ccff1a;
+            scrollbar-color: #f0f #001a2f;
+            scrollbar-width: thin;
+        }
+        .reader-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .reader-content::-webkit-scrollbar-track {
+            background: #001a2f;
+            border-radius: 20px;
+        }
+        .reader-content::-webkit-scrollbar-thumb {
+            background: #f0f;
+            border-radius: 20px;
+            box-shadow: 0 0 16px magenta;
+        }
+
+        /* 編輯面板 -- 科技浮層 */
+        .edit-panel {
+            background: rgba(4, 15, 30, 0.95);
+            backdrop-filter: blur(18px);
+            border: 2px solid #f0f;
+            border-radius: 36px;
+            padding: 24px;
+            margin-top: 16px;
+            box-shadow: 0 0 60px magenta, inset 0 0 20px #0cf;
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .edit-panel.show-panel {
+            display: flex;
+        }
+
+        .edit-textarea {
+            background: #021a26;
+            border: 1px solid #0cf;
+            border-radius: 24px;
+            padding: 24px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #cffff0;
+            resize: vertical;
+            min-height: 220px;
+            font-family: 'Roboto Mono', monospace;
+            box-shadow: inset 0 0 30px #001d2d, 0 0 20px cyan;
+            outline: none;
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .neo-btn {
+            background: transparent;
+            border: 1px solid #0cf7;
+            color: #0cf;
+            padding: 12px 28px;
+            font-size: 1.3rem;
+            border-radius: 60px;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(6px);
+            transition: 0.15s;
+            box-shadow: 0 0 12px cyan;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .neo-btn.magenta {
+            border-color: #f0f;
+            color: #f0f;
+            box-shadow: 0 0 18px magenta;
+        }
+        .neo-btn.magenta:hover {
+            background: #f0f3;
+            border-color: white;
+            color: white;
+            box-shadow: 0 0 40px #ff66ff;
+        }
+        .neo-btn:hover {
+            background: #0cf3;
+            border-color: white;
+            color: white;
+            box-shadow: 0 0 40px cyan;
+        }
+
+        /* 密碼輸入提示用（無額外UI） */
+        .footnote {
+            color: #6af;
+            font-size: 0.9rem;
+            text-align: right;
+            border-top: 1px dashed #f0f6;
+            padding-top: 8px;
+        }
+    </style>
+</head>
+<body>
+<div class="holo-panel" id="app">
+
+    <!-- 書架畫面 (view 1) -->
+    <div id="bookcase-view" class="view">
+        <div class="shelf-header">📡 小說資料庫</div>
+        <div class="shelf-grid">
+            <!-- 只有一部小說：《才能專校》 -->
+            <div class="story-card" id="open-story-btn">
+                <span class="story-icon">📘</span>
+                <span class="story-title">才能專校</span>
+                <span class="story-sub">點擊進入 · 作者Yun7044</span>
+            </div>
+            <!-- 預留科技感裝飾線條 -->
+        </div>
+        <div style="text-align: right; color: #0cf5; padding: 8px; font-size: 1rem; border-top: 1px solid #0cf3;">🔒 唯讀模式 · 編輯需授權</div>
+    </div>
+
+    <!-- 閱讀器畫面 (view 2) 預設隱藏 -->
+    <div id="reader-view" class="view hidden-view">
+        <div class="reader-header">
+            <div class="back-btn" id="back-to-shelf">⏎</div>
+            <div class="reader-title-area">
+                <div class="reader-title" id="reader-story-title">《才能專校》</div>
+                <div class="reader-author" id="reader-author-line">作者：Yun7044</div>
+            </div>
+            <!-- 作者工具按鈕（科技鎖） -->
+            <div class="author-tool-btn" id="author-tool-btn">⚙️🔓</div>
+        </div>
+
+        <!-- 小說內容顯示區 -->
+        <div class="reader-content" id="story-content-display">
+            （載入中...）
+        </div>
+
+        <!-- 編輯面板 (預設隱藏) 只有認證後可顯示 -->
+        <div id="edit-panel" class="edit-panel">
+            <textarea id="editor-textarea" class="edit-textarea" placeholder="編輯小說內容... 支援多行文字"></textarea>
+            <div class="edit-actions">
+                <button class="neo-btn magenta" id="logout-author-btn">🚫 鎖定</button>
+                <button class="neo-btn" id="save-edit-btn">💾 儲存</button>
+                <button class="neo-btn magenta" id="close-panel-btn">✕ 關閉</button>
+            </div>
+            <div class="footnote">⚠️ 只有通過密碼認證才能編輯，修改後自動儲存於此瀏覽器</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // ---------- 設定區域 ----------
+        // 作者密碼（請自行修改為您的專屬密碼）
+        const AUTHOR_PASSWORD = "yun7044";   // <-- 可改成只有自己知道的密碼
+
+        // 預設小說內容 (您可以預先填入真正的內文)
+        const DEFAULT_STORY_CONTENT = 
+"               《才能專校》
+
+             序章：初來乍到
+    
+    今天是我來這個「學校」的第一天，我懷著無比興奮的內心，開始往學校前進，而我到了學校門口後，發生了這件事情······
+
+    「哎呀！」，突然有一位學生在我面前差點摔倒，我趕緊上前去扶住她，她給我的第一印象就是「冒失」，雖然我不知道她會不會跟我同一個班級，但我算是勉強記住她了。
+    
+    我找到了自己的班級「105」班後便走了進去，發現黑板上像是某人預言的一樣畫滿了格子與我們的名字，在我尋找自己的格子時，旁邊走來了一位熟悉的人，「嗨！同學，你好啊」，我看到了那位「冒失鬼」走到了我旁邊開始找自己的位置。
+
+    「啊！找到了！」，我看到她徑直往一個位置走，而那個位置在黑板上對應的名字是「冠」
+
+未完待續⋯⋯
+
+----------------------------------------------
+
+         第一篇：超強班導
+    
+    在我找到自己名字「允」的格子時，大家基本上都已經入座了，而我也走到我的位子坐了下去，在這時，有一個聲音響了起來⋯
+    「所有人都到齊了嗎？」，聲音鏗鏘有力，話語簡短有力，這個聲音的本尊終於出現，有一位男老師從門外走了進來，進來後他開始跟我們自我介紹。
+
+    「你們好啊，我是你們的班導『猩紅』。」自我介紹完畢，當我們所有人都震驚之餘，有一些「知情人士」開始跟一些同學竊竊私語，「你們知道嗎？這位『緋紅』老師是這個學校的王牌教師，聽說他非常嚴厲⋯」，之後的話我沒聽到，但我大概得知了一些訊息。
+
+    這位『猩紅』老師是一位王牌教師，精通數學，曾經到國外任教，聽說這個學校的校長費了好大的勁才請他來這個學校任教，結果就在此時，『猩紅』老師突然說了⋯⋯
+    「被我點到的人，站起來自我介紹，如果有人敢拖延時間、浪費我時間的，一律開除」，在此時，我才得知了，王牌教師的威力…
+
+----------------------------------------------
+
+        第二篇：「新」同學
+
+    在猩紅老師點人起來自我介紹時，我突然聽到了一個記憶深處的名字，「大家好，我的名字叫做『奇』，興趣是……」，而我在聽到「奇」這個名字時，突然想到了小時候也有一個玩伴叫做「奇」。
+
+    聽到了下課鐘聲響起，猩紅老師宣布可以下課時，我馬上走到了奇同學旁邊，結果我還沒說話，這位同學馬上說出了「嗨！允！你也來這間學校了！」，我還沒反應過來，他又接著說「沒想到啊，我們隔了那麼久還能見面！」
+
+    就在此時，有一位學姐走了進來，手上拿著「『喵喵教』社團」的招生的單子，並開始自我介紹，「學弟妹們，你們好啊，我是『喵喵教』的學姐，『𡟺』，也是大你們一個年級的學姐，想加入『喵喵教』社團的，請上來拿這張單子，謝謝！」。
+
+  結果一大群男同學直接衝了上去，裡面還有一些男生說「有機會跟這位校園女神同一個社團，何樂而不為呢！」
+    此時，猩紅老師把我叫到一旁⋯⋯
+
+----------------------------------------------
+
+         第三篇：任課老師
+
+    我思考著剛剛班導跟我說的話時，冠同學走到了我旁邊，「謝謝你同學，在早上扶了我一把，你叫做『允』是吧」，此時的我還在思考班導的話以至於沒有理會她。
+
+    此時上課鐘聲響起，我也顧不上思考，趕緊回到了位置上，這節課是化學課，結果又有一些男同學開始討論，「聽說化學老師是個女老師」這類的話題開始散播，直到本尊走了進來，確實是一位女老師。
+
+    「你們好嗎？菜鳥們，歡迎上我的化學課，我是你們的化學老師『萱』老師」，班上的很多男生都顯露出了興奮的姿態，畢竟作為一位女性，她的身高算高挑，也非常有顏值，但是在下一秒，那些男生們就興奮不起來了，只因為老師的一段話⋯⋯
+
+    「請你們拿出課本，在15分鐘內把1-1讀完，並且熟記內容，完不成的…直接當掉喔」
+剛剛那些興奮的男生直接臉色鐵青，不敢發話，結果就在此時，冠同學突然發話…
+老師，我看完了，此時我想到了班導的話。
+
+----------------------------------------------
+
+             第四篇：偽裝
+
+    在冠同學發話時，我想到了班導跟我說的話，當時班導跟我說「在這個班級裏，有一位超級新星，能力是你們的好幾倍，但她非常桀驁不馴，如果我沒『預言』錯，她應該在今天早上有跟你接觸，你應該知道是誰了，麻煩幫我注意一下，謝謝。」
+
+    在我想這些事情的同時，老師和同學們都一臉難以置信，有一些同學開始竊竊私語，還有一些同學很不滿，大聲吼道「這怎麼可能！？，怎麼可能那麼短時間內看完！」，就在這時，老師發話了。
+
+    「安靜！」，所有同學都安靜下來了，老師緊接著說到：「我也不太相信有人能那麼快就看完，除非…是傳聞中的『那個人』⋯」，那是一位超級新星，擁有所有科目的天賦，但我不知道『那個人』確切被分到哪一班，看來那一位超級新星被分到了這一班啊！
+
+    同學們聽到這個消息之後紛紛看向冠同學，就在此時，冠同學的狀態好像有些許變化⋯⋯
+「我就是那個人喔…呵呵」，她這樣說著。
+
+----------------------------------------------
+
+   第五篇：未知的人與事物
+
+    在我們所有人都還沒反應過來時，老師率先反應了過來，並且說到「看來那位『天才』就在這一班啊…」，而「她」也說到⋯⋯
+    「彼此彼此，老師您也挺厲害的，您是因為發現了我的存在才故意提到那個傳聞的吧……
+嘻嘻⋯⋯」，「她」露出了詭異的笑容。
+
+    就在這時，班導突然走了出來並說道⋯⋯
+「看來你們還不知道這個世界是怎麼運作的，我們這間學校是一間『問題』學院。」
+    
+    至於是什麼『問題』呢？在你們的面前就是第一位『覺醒者』，何謂『覺醒者』呢？『覺醒者』就是覺醒了一些『才能』的人，而這位同學其實在入學之前就已經是『覺醒者』了，但因為『才能』是雙重人格，所以她本人不知道這件事情。
+
+    所有同學在聽到這則訊息時，都沒有人轉得過來，但！就在這時！
+
+    突然有一道光穿透了天花板並照了進來，還有一個人的聲音⋯⋯
+
+----------------------------------------------
+
+        第六篇：校園趣事
+
+    在發生了這件事情之後，我們所有人都鬆了一口氣，因為冠同學恢復原狀了。
+                    （作者：絕對不是伏筆）
+    之後下課鈴聲也響了，班導說道「好了同學們，自由下課吧。」在旁邊的化學老師，一副開玩笑的樣子說「不對吧！猩紅老師！這節是我的課吧！」，而這節下課就在這歡快的氣氛中度過了。
+
+    在上了一上午的課後，終於迎來了下午的「社團時間」！！，班上所有同學興奮的衝出教室並開始尋找自己的社團教室，而就在這時，那一位「冒失鬼」同學又開始冒失了⋯⋯
+
+    「哎？不對啊？表單上面寫的是這裡啊？怎麼這裡…是一間廁所…？」，我好奇的湊上去看，看到了標題，內容是「在廁所上面的樓層，層數是4F，遊戲研究社 -- 社團教室」。
+
+    於是我說道「冠同學，這裡是1F，妳的教室在4F喔。」，她聽完後有一點點羞愧，並說道「呃，謝謝你，允同學。」
+    結果我發現，我跟她同一個社團⋯⋯
+
+----------------------------------------------
+
+            第七篇：難題
+
+    一晃眼，已經過了1個月，而今天是我們的第一次段考，我們真是太幸運了，第一科考的就是猩紅老師教的數學⋯⋯結果我們的監考老師剛好又是猩紅老師，這下我們的難題可大了。
+
+    我看到冠同學一副遊刃有餘的姿態，我猜測這一次的考試應該沒那麼難…吧？
+結果剛開始考5分鐘，我就快答不出來了，我懷疑老師出的題目超綱了。
+
+    考完試之後，我跑去找冠同學，開始詢問她的答案與解題思維等等的，結果她也覺得超綱了，就在我們兩個陷入煩惱時⋯⋯「那位」男人出現了，是我們的班導----猩紅老師。
+
+    猩紅老師一進來就開始宣布一些事情⋯⋯
+「這次的題目很難吧。我是為了測試你們所以才考那麼難，阿對了，我這個人很討厭浪費時間，所以…如果這一次有人零分，我就會認為我教那個人是在浪費時間，所以會直接開除」           
+                                               第一章-開學篇 完結
+
+----------------------------------------------
+
+第二章-校園篇 開始
+          第八篇：學長姐們
+    
+    在第一次段考完後，我們學校迎來了第一次的園遊會，而這一次的園遊會呢，可以見到比我們更厲害的學長姐們，我們對此都很期待
+
+    「哎呀哎呀⋯我的學弟妹們真可愛啊～」，突然從門外傳來了這句話，我們所有人好奇的往門外看去，此時有一位看起來和藹可親的學長和一位身高不高的學姐走了進來。
+    
+    此時那位學長說道「我的名字叫做『白狼』，是大你們兩個年級的學長，而這位學姐叫做「Rose」，是一位來自國外的人，但她從小到大都是在這個國家長大，所以不用擔心語言的問題。」
+結果學長話鋒一轉，並且說道
+
+    「我是來跟你們宣戰的，因為我聽說你們班出現了一位天才，而這一次的園遊會，其中有一班的活動是『智慧搶答賽』，班級在這裡，那位天才，到時候我會來找你的⋯⋯」
+學長說完後就丟下一張紙條並帶著學姐離開
+
+----------------------------------------------
+
+      第九篇：園遊會的工作
+
+    在學長學姐走後，我們陷入了一片寂靜，只有猩紅班導說了一些話，「我們不用理會他們，我等一下下課會去處理，畢竟他們上課時間隨意闖入別人的教室。」
+
+    在班導講完這些話後，我們都鬆了一口氣，至於之後怎麼辦，就聽天由命吧，但我們還有一些重要的事情要做，就是園遊會的工作分配，班導似乎也意識到了這件事，他給了我們十分鐘的時間去自己找同伴，至少要三人，於是我趕緊走到冠同學和奇同學的旁邊，我們很快就組成一組了。
+
+    就在這時，有一位班上的同學來找我們，「你…你們還缺人嗎？」，我們都不知道她是誰，只有我在開學的時候稍微記得，她的綽號叫做「黑色」，此時，冠同學突然說「呃，班上還有其他人啊，為什麼偏偏要來找我們？」。
+
+    「因為你們看起來比較親切」，黑色是這麼說的，於是我們就接納了她來我們組，之後猩紅班導給我們分配的工作是「記帳」，這時黑色說，那我們沒問題了，我數學特別好！
+
+----------------------------------------------
+
+          第十篇：園遊會
+
+    在兩週後，終於迎來了園遊會，我們所有人都很興奮，除了一個人，那個人叫做「婭」，是我們班最內向的一個人，但這一次猩紅班導卻給她一個「推銷」的工作，所以她有點崩潰，到園遊會之前，她一直說著「我不要出去推銷啊啊啊！」。
+
+    在我們班擺好攤位之後，那兩位學長姐果然沒來找我們，應該是猩紅班導已經處理好了，此時，我們負責櫃檯工作的櫃檯小姐「凜」已經開始接待第一個客人了，由於猩紅班導的「特異功能」，他預測到了今天非常熱，所以我們賣冰。
+
+    凜同學接待完第一個客人之後，我們開始記帳，「蘋果口味冰棒x1、哈蜜瓜口味冰棒x2」，正當我們記完帳之後，有一個熟悉的聲音突然響起。
+
+    「哎呀哎呀！這一班真的很不講信用，說好了要比試呢？結果沒來！」，凜同學第一時間說「不好意思，如果沒有要買東西，請你離開」，而白狼學長直接把凜同學推開⋯⋯
+
+----------------------------------------------
+
+     第十一篇：超強班導2
+
+    在白狼學長推倒凜同學後，暗中觀察的班導走了出來，班導說「我就知道這傢伙不老實，看來要好好『教訓』一頓才會老實啊」，說完後班導用挑釁的眼神看向白狼學長。
+
+    「阿對對對，你是老師，我是學生，所以我一定要聽你的是吧？」白狼學長說完後直接往班導的方向要揮出一拳，結果在一瞬間，班導的右眼通紅，在我們還沒反應過來的一瞬間，白狼學長就倒在地上，昏過去了。
+
+    我們所有人都很驚訝，但班導說「不要放鬆警惕！有人暗中觀察我們！」，班導說完後從原地消失，下一秒就拎著Rose學姐出現，我們再次驚訝。
+
+    「妳為什麼要錄影啊！回答我！！」，班導憤怒的吼著，Rose學姐直接被嚇哭了，她說「是白狼威脅我這麼做的」。
+
+    此時，在校長辦公室，白狼學長正在跟校長打小報告⋯⋯，「爺爺！他們這樣太囂張了！」，校長說「沒事，我會『處理』的」
+
+----------------------------------------------
+
+ 第十二篇：開學後的大危機
+
+    在園遊會結束的一個禮拜後，我們所有人以為猩紅班導解決了學長姐來找碴的事件，但是，令我們萬萬沒想到的是⋯⋯
+
+    「我被降職了，不能再當你們的班導了」，所有人都很驚訝，猩紅老師接著說「因為白狼那傢伙是校長的孫子，白狼之後跑去跟校長告狀了。」，我們所有人都很氣憤。
+
+    「所有人！都坐下！我要跟你們講事情！」，所有人都坐回去自己的座位上，班導緊接著說「我要告訴你們，這個班的真相，以及為什麼會有人像冠同學那樣有『才能』。」
+                   
+                   （作者：詳情請看第四篇）
+
+    猩紅老師繼續說「其實我們班所有人都有潛力能覺醒『才能』，只是冠同學比較特殊，她的兄弟姐妹其中有一位也有『才能』，就是你們口中的校園女神，大你們一個年級的『𡟺』⋯⋯」
+                                                第二章-校園篇 完結
+
+----------------------------------------------
+第三章--臥底篇 開始
+       第十三篇：新的學期
+
+    我們開始了新的學期，我們的前班導「緋紅」老師已經是一個數學老師，而我們新的班導是我們都意想不到的人⋯⋯
+    「你們好啊！菜鳥們！」，我們的化學老師『夷陵』老師走進了我們班，當我們所有人都還在消化這則訊息時，她卻開始宣布⋯⋯
+
+    「所有人等一下，一個接著一個站起來做自我介紹，如果敢浪費我的時間，或者是講一些沒有意義的東西，一律當掉化學！」
+
+    我們雖然知道夷陵老師很嚴厲，但沒想到她卻嚴厲到這種地步，於是從座號一號開始站起來自我介紹，介紹完之後，班導又宣布了一件事情。
+
+    「我們班有一位轉學生喔，請你進來吧『月』。」一位長髮、高挑、有一點陰沉的男生走了進來，他進來後便開始了自我介紹。
+
+    「你們好，我叫做『月』，請多指教，自我介紹完畢。」
+
+----------------------------------------------
+
+        第十四篇：「臥底」
+
+    在我們所有人都很開心有新同學加入時，我看向了冠同學，她卻露出了不安的眼神，我那個時候沒放在心上，但是，到了下課，冠同學就來找我講事情了⋯⋯
+
+    「允同學，我想要跟你講一件事情⋯⋯」，冠同學是這麼說的，在我示意到外面講之後，我跟她就走到了外面，到了外面之後，我問了冠同學發生什麼事？她卻講了一件事情。
+
+    「緋紅老師在上學期的休業式的時候，有幫我預言一件事情，那個時候緋紅老師說『小心任何新接觸的人，你新接觸的人其中有一個人是校長的人』。」
+
+    冠同學緊接著說「緋紅老師那個時候還說了『因為冠同學妳的「才能」很特殊，所以有不少覬覦妳的「才能」的人，包含反念那傢伙，甚至校長也是，所以妳自己要小心一點。』」
+
+    「好，那我知道了，我會幫妳的」，在我給出這樣肯定的答覆後，冠同學緊張的神色也舒緩了一些。
+
+----------------------------------------------
+
+         第十五篇：「情報」
+
+    我跟冠同學在外面討論時，月同學突然走了出來並且說「你好，冠同學，我想和你交個朋友！」，並伸出了手要與冠小姐握手，此時的我還沒放鬆警惕，我用低沉並具有威脅性的語氣說「你想要幹什麼？」。
+
+    而月同學見情況不妙，連忙擺手說「我沒有要幹嘛呀，我只是想要和冠同學當個朋友而已⋯⋯」，但我得到這個答案後，還是警告了他⋯
+
+    「你以後不要隨便接觸冠同學！知道了嗎！」我這樣講了之後，月同學卻說出了一件事情⋯
+「我知道你們在抓『臥底』喔，並且我知道是誰，雖然我可以告訴你們，但作為交換條件，允同學你要告訴我是誰指使你這麼做的。」
+
+    在得知這個條件後，我內心鬆了一口氣，因為我要發動我的能力了，於是我跟月同學說「可以啊！沒問題啊！那你先說你的情報吧。」
+在月同學開始說他的情報之前，我提醒冠同學仔細聽，作為一個「天才」，一定能聽出有蹊蹺的地方，然後我開始發動我的能力⋯⋯
+
+----------------------------------------------
+
+             第十六篇：騙局
+
+    我悄悄發動了我的能力『infinity reach』
+可以無限制距離發動心電感應，但缺點就是要觸碰過那個人。
+
+    我用心電感應感應到了緋紅老師在前面轉角的樓梯正在往下走，於是我趕緊跟緋紅老師心電感應「老師！先不要走下來！有人要跟我們交換情報。」緋紅老師似乎聽到了，所以他停下了腳步，並開始跟我打暗號。
+
+    我得知的暗號內容是「月同學是清白的，相信他的情報，並且月同學是我請來的，幫你們一起抓臥底的。」在我得知這個消息之後，我便試探了一下月同學。
+
+    「月同學，你的情報…是真實的嗎？」在我這樣問之後，月同學似乎被揭穿「騙局」一樣，很慌張，並且說「我的情報…是真的啊⋯⋯」
+這讓我越來越懷疑那一位「樓梯間的『緋紅老師』是真實的還是偽裝的」。
+
+    結果在這時，有一位緋紅老師從我們背後走過來⋯⋯
+
+----------------------------------------------
+
+         第十七篇：「洗腦」
+
+    緋紅老師一走過來就非常警惕，馬上質問月同學，「你是誰啊？來105班幹嘛？」，於是我跟緋紅老師解釋「月同學是新來的轉學生」，緋紅老師一聽到這個消息，他馬上表現出疑惑的神情。
+
+    「轉學生在上學期就要申請轉進來了啊？那我怎麼沒收到通知？」冠同學聽到這個訊息馬上聯想到反念學長，於是跟緋紅老師說。
+
+    「老師！把月同學抓起來！」，緋紅老師一聽到冠同學的聲音，馬上把月同學打暈，此過程不到1秒，冠同學接著解釋「你們還記得反念學長嗎？我的姐姐，沒錯，就是『麻吉』幫我調查到了反念學長的資料。」
+
+    結果反念學長也是擁有『才能』的人類，他的才能是『意識修改器』，能操控他人的意識，我猜測，反念學長先是操控了學務主任的意識並且把緋紅老師革職，然後再操控化學老師的意識，讓月同學順理成章的轉進我們班，然後反念學長是校長的孫子，所以…
+    「月同學是校長那一方的『臥底』。」
+
+----------------------------------------------
+
+         第十八篇：「洗腦」
+
+    在月同學被打暈時，我突然想到在轉角處的『緋紅老師』，於是我趕快跟緋紅老師說，「老師！有人假冒你！那個人現在正在往2樓移動」，緋紅老師聽到後直接從原地消失。
+
+    下一秒，緋紅老師出現在原地，並且手上拎著一個已經昏過去的Rose學姐，我走回班上，叫了「翎同學」出來。
+
+    翎同學出來後，緋紅老師跟她說「翎同學，請妳用妳的『才能』，『破解』這位學姐的思想。」，翎同學聽完後便把手放在學姐的額頭上，過了一下下，翎同學開始唸。
+
+    「這位學姐也是有『才能』的人類，名字叫做『自由風格』，能偽裝成其他人的樣貌，連氣場都可以偽裝，但她似乎被一種叫做『意識修改器』的『才能』給操控了。」
+
+    在得知這件事情後，緋紅老師淡定的說⋯⋯
+「那我知道了，我會找『第三方勢力』來幫忙整治這件事情，畢竟連校長都是『敵對勢力』。」
+我們聽完後都鬆了一口氣，但就在這時⋯⋯
+
+----------------------------------------------
+
+    第十九篇：校長的真面目
+
+    銜接上一篇（十八篇），反念學長帶著『校長』出現了，反念學長說「校長！就是這幫傢伙太囂張了！」，在這時，我和冠同學都很疑惑，站在反念學長旁邊，所謂的『校長』，竟然是一位年輕女子。
+    緋紅老師卻在這時說了，「學妹啊，沒想到我還能在妳管理的學校裏工作，妳叫做『顏』吧，是在我大學時期，小我兩屆的學妹。」
+
+    「沒想到學長你還有辦法記得我啊⋯⋯」
+「沒錯，我就是『顏』，是當時小你兩屆的學妹，但沒想到，現在我們的立場卻那麼劍拔弩張啊⋯⋯」，顏校長是這麼說的，就在此時，月同學醒來了，他看到校長，馬上說了⋯⋯
+「校長，依您的要求，我已經把他們聚集起來了，您可以隨時啟動『計劃』。」
+
+    緋紅老師這時才知道，我們被擺了一道，顏校長以及月同學他們是為了捉拿冠同學才用了這麼一個『計劃』。此時反念學長說「只要把冠同學這位有『才能』的『天才』抓起來研究，我們都可以有無盡的榮譽了！」
+                                               第三章-臥底篇 完結
+
+----------------------------------------------
+  
+    番外(19.5)篇：認識同學
+    「大家好啊！我是允！」。很高興大家能來參加我的『演講』，今天我要帶來的主題是⋯⋯
+『105班的老師同學們。』
+    首先，我要來先介紹我們的前班導，也是最強老師『緋紅老師』，他是專攻數學的超強老師，『才能』是『極意·緋紅之眼』，發動『才能』時，右眼會變得通紅，同時也會增強身體的各項能力。下一位要介紹的是「冠同學」。
+
+    「冠同學」是一位出生在『才能』世家的「天才」，她的姐姐也是擁有『才能』的人，而冠同學的『才能』叫『雙人之舞』，會無意識的切換成『第二人格』。下一位要介紹的就是⋯⋯我本人啦。
+   
+    我本人是一位『樸素』的高中生，『才能』叫『Infinity reach』，發動時，可以無限制距離發動心電感應，但缺點就是要觸碰過那個人。最後一位要介紹的人是⋯⋯「翎同學」。
+    翎同學是我們班最內向的一位同學，在科技領域非常厲害，而翎同學的『才能』非常有意思，叫『破解的密鑰』，通過觸碰對方額頭去破解對方的思想，甚至連個人資料都可以『破解』。
+
+----------------------------------------------
+第四章--結業篇 開始
+       第二十篇：回歸日常
+
+    在發生完這樣的事情之後呢，緋紅老師跟我們說，「我會請第三方勢力來處理這件事，所以我預計到結業式都不會出現在學校了。」，說完後緋紅老師就從原地消失了。
+
+    於是我們所有人都回歸日常生活了，在今天，我們的英文老師，外號『瘋子』，第一次出現在我們班，我們所有人都不知道有這一位老師，我們班的知情人士透露。
+
+    「其實之前的英文老師，外號『空氣』，一直是代課老師來著。」，我們所有人才知道，原來我們英文課一直很簡單的原因是⋯⋯
+真正的老師沒來上，一直是代課老師上的。
+
+  這時，『瘋子』老師說，  「來吧！所有人一個接著一個站起來自我介紹吧，讓我認識認識你們。」
+
+    於是這一次從第一排的第一位同學，「冠同學」開始自我介紹。結果英文老師說⋯⋯
+「妳是冠同學吧，妳不用介紹了，我認識妳。」
+
+----------------------------------------------
+
+    第二十一篇：二段前夕
+
+    在上完第一節正式的英文課之後，我們所有人都在討論一件事情，那就是⋯⋯
+「第二次段考」，結果在只剩一個禮拜時，真正的英文老師才出現，所以我們完全不知道考什麼且怎麼複習。
+
+    就在這時，我們目前的班導『夷陵』老師出現，並且幫了我們，她拿出了一大疊的考卷。國文、數學、英文、地理、歷史、公民、生物、物理都各有5張，結果班導教的化學有10張，班導說「只要在一個禮拜內把除了化學的各科的一張寫完就可以了，不過化學要寫2張喔。」
+
+    我們所有人都發出了哀嚎，我們班的第一名，「冠同學」也覺得偏難，數學天才「黑色」說「這5張數學都很難。」
+
+    結果，就在這時，班導又給了我們一個消息，她說「我聯絡過所有科目的老師了，他們都同意讓你們在上課時間寫這張，就等同於自習了，但是，要在對應的課堂上寫對應的科目。」
+
+----------------------------------------------";
+
+        // 資料儲存 key (localStorage)
+        const STORAGE_KEY = 'caineng_novel_content';
+
+        // 全域狀態
+        let currentStoryId = 'caineng';          // 目前只有一部作品
+        let stories = {
+            caineng: {
+                id: 'caineng',
+                title: '《才能專校》',
+                author: 'Yun7044',
+                content: ''
+            }
+        };
+
+        // 認證狀態 & 編輯面板可見性
+        let authorAuthenticated = false;    // 是否通過密碼驗證 (session)
+        let isEditPanelVisible = false;
+
+        // DOM 元素
+        const bookcaseView = document.getElementById('bookcase-view');
+        const readerView = document.getElementById('reader-view');
+        const storyDisplay = document.getElementById('story-content-display');
+        const readerTitle = document.getElementById('reader-story-title');
+        const readerAuthor = document.getElementById('reader-author-line');
+        const backBtn = document.getElementById('back-to-shelf');
+        const openStoryBtn = document.getElementById('open-story-btn');
+        const authorToolBtn = document.getElementById('author-tool-btn');
+        const editPanel = document.getElementById('edit-panel');
+        const editorTextarea = document.getElementById('editor-textarea');
+        const saveEditBtn = document.getElementById('save-edit-btn');
+        const closePanelBtn = document.getElementById('close-panel-btn');
+        const logoutBtn = document.getElementById('logout-author-btn');
+
+        // ---------- 初始化 / 載入儲存內容 ----------
+        function loadStoriesFromStorage() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                stories.caineng.content = saved;
+            } else {
+                stories.caineng.content = DEFAULT_STORY_CONTENT;
+            }
+        }
+        loadStoriesFromStorage();
+
+        // ---------- 工具函數：儲存至 localStorage ----------
+        function persistContent() {
+            localStorage.setItem(STORAGE_KEY, stories.caineng.content);
+        }
+
+        // ---------- 更新閱讀器顯示內容 (依據 currentStoryId) ----------
+        function refreshReaderContent() {
+            const story = stories.caineng;  // 只有一個故事
+            readerTitle.textContent = story.title;
+            readerAuthor.textContent = `作者：${story.author}`;
+            storyDisplay.textContent = story.content;
+        }
+
+        // ---------- 切換到書架 ----------
+        function showBookcase() {
+            // 隱藏閱讀畫面，顯示書架
+            readerView.classList.add('hidden-view');
+            bookcaseView.classList.remove('hidden-view');
+            // 重置編輯相關狀態 (離開閱讀器順便鎖住)
+            authorAuthenticated = false;
+            isEditPanelVisible = false;
+            editPanel.classList.remove('show-panel');
+        }
+
+        // ---------- 切換到閱讀器 (並顯示特定故事) ----------
+        function showReader() {
+            bookcaseView.classList.add('hidden-view');
+            readerView.classList.remove('hidden-view');
+            // 重新確保內容最新
+            refreshReaderContent();
+            // 每次進入閱讀器，為了安全：強制登出編輯模式
+            authorAuthenticated = false;
+            isEditPanelVisible = false;
+            editPanel.classList.remove('show-panel');
+        }
+
+        // ---------- 開啟小說 (從書架點擊) ----------
+        function openStory() {
+            // 只有一部作品，直接顯示閱讀器
+            showReader();
+        }
+
+        // ---------- 處理作者工具按鈕 (點擊後驗證or切換面板) ----------
+        function handleAuthorTool() {
+            if (!authorAuthenticated) {
+                // 未驗證：彈出密碼視窗
+                const inputPwd = prompt('🔐 請輸入作者密碼以解鎖編輯功能：');
+                if (inputPwd === AUTHOR_PASSWORD) {
+                    authorAuthenticated = true;
+                    // 認證成功後自動開啟編輯面板
+                    openEditPanel();
+                } else if (inputPwd !== null) {
+                    alert('❌ 密碼錯誤，無法編輯。');
+                }
+                // 若按下取消，不做任何事
+            } else {
+                // 已驗證：直接切換編輯面板顯示/隱藏
+                if (isEditPanelVisible) {
+                    closeEditPanel();
+                } else {
+                    openEditPanel();
+                }
+            }
+        }
+
+        // 開啟編輯面板：填充當前內容、顯示、更新狀態
+        function openEditPanel() {
+            if (!authorAuthenticated) return; // 防呆
+
+            // 將目前小說內容放入textarea
+            editorTextarea.value = stories.caineng.content;
+            // 顯示面板
+            editPanel.classList.add('show-panel');
+            isEditPanelVisible = true;
+        }
+
+        // 關閉編輯面板
+        function closeEditPanel() {
+            editPanel.classList.remove('show-panel');
+            isEditPanelVisible = false;
+        }
+
+        // 儲存編輯內容
+        function saveEditedContent() {
+            if (!authorAuthenticated) {
+                alert('未經授權，無法儲存。請重新認證。');
+                return;
+            }
+            const newContent = editorTextarea.value;
+            if (newContent.trim() === '' && !confirm('內容為空，確定要儲存嗎？')) {
+                return;
+            }
+            // 更新記憶體中的故事內容
+            stories.caineng.content = newContent;
+            // 更新顯示區
+            refreshReaderContent();
+            // 儲存到 localStorage
+            persistContent();
+            // 可選：儲存後不關閉面板，讓作者繼續編輯（符合習慣）
+            // 如果想關閉，可以使用 closeEditPanel()，但保持開啟較方便
+            // 我們保持開啟，但可以提示儲存完成
+            // 輕提示用 alert 有點擾人，改用閃一下視覺（簡單顯示 panel 不變化）
+            // 也可以不做任何提示，使用者看到內容改變即成功
+            // 順便刷新textarea內容不變
+        }
+
+        // 登出（撤銷認證）並關閉面板
+        function logoutAuthor() {
+            authorAuthenticated = false;
+            closeEditPanel();
+        }
+
+        // ---------- 事件綁定 ----------
+        // 返回書架
+        backBtn.addEventListener('click', showBookcase);
+
+        // 開啟小說 (書架上的卡片)
+        openStoryBtn.addEventListener('click', openStory);
+
+        // 作者工具按鈕
+        authorToolBtn.addEventListener('click', handleAuthorTool);
+
+        // 儲存編輯
+        saveEditBtn.addEventListener('click', saveEditedContent);
+
+        // 關閉編輯面板 (不改變認證狀態)
+        closePanelBtn.addEventListener('click', closeEditPanel);
+
+        // 登出(鎖定)按鈕
+        logoutBtn.addEventListener('click', function() {
+            logoutAuthor();
+        });
+
+        // 可選：當在閱讀器按下返回時，也重置認證 (但 showBookcase 已有 reset)
+        // 為了確保安全，任何返回書架動作都清除認證。已經在 showBookcase 處理。
+
+        // 額外防護：如果讀者透過開發者工具，也無法輕易修改，因為儲存需經過程式。
+        // 剛載入時顯示書架，但需確保內容已載入
+        // 預設顯示書架，但先refresh一下內容以備用（初始化）
+        refreshReaderContent();
+
+        // 如果讀者直接重新整理，停留在書架
+        // 一切就緒
+
+        // 增加一個小功能：點擊作者欄位可快速查看密碼提示？（不需要，但友善提醒）
+        // 我們在編輯面板下方已有說明
+
+        // 另外，若 localStorage 被清空，重新取得預設
+        window.addEventListener('load', function() {
+            // 再次確認儲存內容 (防止其他分頁修改? 單頁夠用)
+            loadStoriesFromStorage();
+            refreshReaderContent();
+        });
+    })();
+</script>
+<!-- 備註：作者Yun7044 可透過右下角工具按鈕輸入密碼(yun7044)編輯內容，修改後會儲存在瀏覽器中 -->
+</body>
+</html>
