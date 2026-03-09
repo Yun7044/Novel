@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
@@ -21,7 +21,7 @@
             padding: 16px;
         }
 
-        /* 主視窗 -- 科技玻璃效果 */
+        /* 主視窗 — 科技玻璃效果 */
         .holo-panel {
             width: 100%;
             max-width: 900px;
@@ -88,7 +88,7 @@
             box-shadow: inset 0 0 6px #00e0ff;
         }
 
-        /* 科技卡片 -- 只有一本書 */
+        /* 科技卡片 — 只有一本書 */
         .story-card {
             width: 260px;
             background: rgba(0, 30, 50, 0.7);
@@ -205,14 +205,14 @@
             box-shadow: 0 0 30px magenta;
         }
 
-        /* 小說內容區域 */
+        /* 小說內容區域 — 保留所有換行與空格 */
         .reader-content {
             flex: 1;
             overflow-y: auto;
             padding: 28px 20px;
             font-size: 1.3rem;
             line-height: 1.8;
-            white-space: pre-wrap;
+            white-space: pre-wrap;        /* 保留換行、空格，自動換行 */
             word-break: break-word;
             text-align: justify;
             background: #02131e30;
@@ -236,7 +236,7 @@
             box-shadow: 0 0 16px magenta;
         }
 
-        /* 編輯面板 -- 科技浮層 */
+        /* 編輯面板 — 科技浮層 */
         .edit-panel {
             background: rgba(4, 15, 30, 0.95);
             backdrop-filter: blur(18px);
@@ -267,6 +267,7 @@
             font-family: 'Roboto Mono', monospace;
             box-shadow: inset 0 0 30px #001d2d, 0 0 20px cyan;
             outline: none;
+            white-space: pre-wrap;       /* 編輯區也保留換行 */
         }
 
         .edit-actions {
@@ -350,14 +351,14 @@
             <div class="author-tool-btn" id="author-tool-btn">⚙️🔓</div>
         </div>
 
-        <!-- 小說內容顯示區 -->
+        <!-- 小說內容顯示區 (保留換行與分隔線) -->
         <div class="reader-content" id="story-content-display">
             （載入中...）
         </div>
 
         <!-- 編輯面板 (預設隱藏) 只有認證後可顯示 -->
         <div id="edit-panel" class="edit-panel">
-            <textarea id="editor-textarea" class="edit-textarea" placeholder="編輯小說內容... 支援多行文字"></textarea>
+            <textarea id="editor-textarea" class="edit-textarea" placeholder="編輯小說內容... 支援多行文字與分隔線"></textarea>
             <div class="edit-actions">
                 <button class="neo-btn magenta" id="logout-author-btn">🚫 鎖定</button>
                 <button class="neo-btn" id="save-edit-btn">💾 儲存</button>
@@ -374,9 +375,20 @@
         // 作者密碼（請自行修改為您的專屬密碼）
         const AUTHOR_PASSWORD = "yun7044";   // <-- 可改成只有自己知道的密碼
 
-        // 預設小說內容 (您可以預先填入真正的內文)
-        const DEFAULT_STORY_CONTENT = 
-"《才能專校》Yun7044 著 序章：初來乍到";
+        // 預設小說內容 — 使用模板字符串完整保留您提供的序章格式
+        const DEFAULT_STORY_CONTENT = `序章：初來乍到
+    
+今天是我來這個「學校」的第一天，我懷著無比興奮的內心，開始往學校前進，而我到了學校門口後，發生了這件事情······
+
+「哎呀！」，突然有一位學生在我面前差點摔倒，我趕緊上前去扶住她，她給我的第一印象就是「冒失」，雖然我不知道她會不會跟我同一個班級，但我算是勉強記住她了。
+
+我找到了自己的班級「105」班後便走了進去，發現黑板上像是某人預言的一樣畫滿了格子與我們的名字，在我尋找自己的格子時，旁邊走來了一位熟悉的人，「嗨！同學，你好啊」，我看到了那位「冒失鬼」走到了我旁邊開始找自己的位置。
+
+「啊！找到了！」，我看到她徑直往一個位置走，而那個位置在黑板上對應的名字是「冠」
+
+未完待續⋯⋯
+
+———————————————————————`;
 
         // 資料儲存 key (localStorage)
         const STORAGE_KEY = 'caineng_novel_content';
@@ -577,6 +589,6 @@
         });
     })();
 </script>
-<!-- 備註：作者Yun7044 可透過右下角工具按鈕輸入密碼(yun7044)編輯內容，修改後會儲存在瀏覽器中 -->
+<!-- 備註：作者Yun7044 可透過右上工具按鈕輸入密碼(yun7044)編輯內容，所有換行與分隔線皆會完整保留 -->
 </body>
 </html>
