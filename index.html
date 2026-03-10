@@ -319,273 +319,6 @@
             border-top: 1px dashed #f0f6;
             padding-top: 8px;
         }
-
-          .shelf-header {
-            padding: 16px 8px 8px;
-            border-bottom: 1px solid #00ffff33;
-            text-shadow: 0 0 8px cyan;
-            letter-spacing: 2px;
-            font-weight: 400;
-            font-size: 1.8rem;
-        }
-
-        .shelf-grid {
-            flex: 1;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 24px;
-            padding: 32px 16px;
-            justify-content: center;
-            align-items: flex-start;
-            overflow-y: auto;
-            scrollbar-width: thin;
-            scrollbar-color: #00aaff #001822;
-        }
-
-        .shelf-grid::-webkit-scrollbar {
-            width: 8px;
-        }
-        .shelf-grid::-webkit-scrollbar-track {
-            background: #001822;
-            border-radius: 20px;
-        }
-        .shelf-grid::-webkit-scrollbar-thumb {
-            background: #0cf;
-            border-radius: 20px;
-            box-shadow: inset 0 0 6px #00e0ff;
-        }
-
-        /* 科技卡片 — 只有一本書 */
-        .story-card {
-            width: 260px;
-            background: rgba(0, 30, 50, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid #0cf3;
-            border-radius: 32px;
-            padding: 32px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 0 20px #00b8ff33;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .story-card:hover {
-            border-color: #0cf;
-            box-shadow: 0 0 35px cyan, inset 0 0 20px #00aaff40;
-            transform: translateY(-4px) scale(1.02);
-            background: rgba(0, 50, 70, 0.8);
-        }
-
-        .story-icon {
-            font-size: 64px;
-            filter: drop-shadow(0 0 12px cyan);
-            line-height: 1;
-        }
-
-        .story-title {
-            font-size: 2rem;
-            font-weight: 500;
-            letter-spacing: 4px;
-            text-shadow: 0 0 15px cyan;
-        }
-
-        .story-sub {
-            color: #9fc;
-            font-size: 1rem;
-            opacity: 0.8;
-            border-top: 1px dashed #0cf5;
-            padding-top: 12px;
-        }
-
-        /* ========== 閱讀器畫面 ========== */
-        .reader-header {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            padding: 8px 8px 16px;
-            border-bottom: 1px solid #0cf3;
-            flex-wrap: wrap;
-        }
-
-        .back-btn {
-            background: transparent;
-            border: 1px solid #0cf7;
-            color: #0cf;
-            font-size: 2rem;
-            line-height: 1;
-            width: 50px;
-            height: 50px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 0 12px #0cf5;
-        }
-        .back-btn:hover {
-            background: #0cf3;
-            border-color: cyan;
-            box-shadow: 0 0 30px cyan;
-            transform: scale(1.05);
-        }
-
-        .reader-title-area {
-            flex: 1;
-        }
-        .reader-title {
-            font-size: 2.2rem;
-            font-weight: 300;
-            text-shadow: 0 0 12px #0cf;
-            letter-spacing: 2px;
-        }
-        .reader-author {
-            font-size: 1.1rem;
-            color: #aaffee;
-            text-shadow: 0 0 8px #0cf;
-            opacity: 0.9;
-        }
-
-        .author-tool-btn {
-            background: #0cf1;
-            border: 1px solid #f0f;
-            color: #f0f;
-            font-size: 1.8rem;
-            padding: 8px 16px;
-            border-radius: 60px;
-            box-shadow: 0 0 18px #f0f7, inset 0 0 8px #f0f5;
-            cursor: pointer;
-            transition: 0.15s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(4px);
-        }
-        .author-tool-btn:hover {
-            background: #f0f3;
-            border-color: cyan;
-            color: white;
-            box-shadow: 0 0 30px magenta;
-        }
-
-        /* 小說內容區域 — 保留所有換行與空格 */
-        .reader-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 28px 20px;
-            font-size: 1.3rem;
-            line-height: 1.8;
-            white-space: pre-wrap;        /* 保留換行、空格，自動換行 */
-            word-break: break-word;
-            text-align: justify;
-            background: #02131e30;
-            border-radius: 28px;
-            margin: 16px 0;
-            border: 1px solid #0cf2;
-            box-shadow: inset 0 0 50px #001a29, 0 0 20px #00ccff1a;
-            scrollbar-color: #f0f #001a2f;
-            scrollbar-width: thin;
-        }
-        .reader-content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .reader-content::-webkit-scrollbar-track {
-            background: #001a2f;
-            border-radius: 20px;
-        }
-        .reader-content::-webkit-scrollbar-thumb {
-            background: #f0f;
-            border-radius: 20px;
-            box-shadow: 0 0 16px magenta;
-        }
-
-        /* 編輯面板 — 科技浮層 */
-        .edit-panel {
-            background: rgba(4, 15, 30, 0.95);
-            backdrop-filter: blur(18px);
-            border: 2px solid #f0f;
-            border-radius: 36px;
-            padding: 24px;
-            margin-top: 16px;
-            box-shadow: 0 0 60px magenta, inset 0 0 20px #0cf;
-            display: none;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .edit-panel.show-panel {
-            display: flex;
-        }
-
-        .edit-textarea {
-            background: #021a26;
-            border: 1px solid #0cf;
-            border-radius: 24px;
-            padding: 24px;
-            font-size: 1.2rem;
-            line-height: 1.6;
-            color: #cffff0;
-            resize: vertical;
-            min-height: 220px;
-            font-family: 'Roboto Mono', monospace;
-            box-shadow: inset 0 0 30px #001d2d, 0 0 20px cyan;
-            outline: none;
-            white-space: pre-wrap;       /* 編輯區也保留換行 */
-        }
-
-        .edit-actions {
-            display: flex;
-            gap: 18px;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-
-        .neo-btn {
-            background: transparent;
-            border: 1px solid #0cf7;
-            color: #0cf;
-            padding: 12px 28px;
-            font-size: 1.3rem;
-            border-radius: 60px;
-            font-weight: 500;
-            cursor: pointer;
-            backdrop-filter: blur(6px);
-            transition: 0.15s;
-            box-shadow: 0 0 12px cyan;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .neo-btn.magenta {
-            border-color: #f0f;
-            color: #f0f;
-            box-shadow: 0 0 18px magenta;
-        }
-        .neo-btn.magenta:hover {
-            background: #f0f3;
-            border-color: white;
-            color: white;
-            box-shadow: 0 0 40px #ff66ff;
-        }
-        .neo-btn:hover {
-            background: #0cf3;
-            border-color: white;
-            color: white;
-            box-shadow: 0 0 40px cyan;
-        }
-
-        /* 密碼輸入提示用（無額外UI） */
-        .footnote {
-            color: #6af;
-            font-size: 0.9rem;
-            text-align: right;
-            border-top: 1px dashed #f0f6;
-            padding-top: 8px;
-        }
     </style>
 </head>
 <body>
@@ -595,7 +328,7 @@
     <div id="bookcase-view" class="view">
         <div class="shelf-header">📡 小說資料庫</div>
         <div class="shelf-grid">
-            <!-- 第一部小說：《才能專校》 -->
+            <!-- 只有一部小說：《才能專校》 -->
             <div class="story-card" id="open-story-btn">
                 <span class="story-icon">📘</span>
                 <span class="story-title">才能專校</span>
@@ -620,46 +353,6 @@
 
         <!-- 小說內容顯示區 (保留換行與分隔線) -->
         <div class="reader-content" id="story-content-display">
-            （載入中...）
-        </div>
-
-        <!-- 編輯面板 (預設隱藏) 只有認證後可顯示 -->
-        <div id="edit-panel" class="edit-panel">
-            <textarea id="editor-textarea" class="edit-textarea" placeholder="編輯小說內容... 支援多行文字與分隔線"></textarea>
-            <div class="edit-actions">
-                <button class="neo-btn magenta" id="logout-author-btn">🚫 鎖定</button>
-                <button class="neo-btn" id="save-edit-btn">💾 儲存</button>
-                <button class="neo-btn magenta" id="close-panel-btn">✕ 關閉</button>
-            </div>
-            <div class="footnote">⚠️ 只有通過密碼認證才能編輯，修改後自動儲存於此瀏覽器</div>
-
-<div class="story-card" id="open-story-btn">
-
-<!-- 第二部小說：《才能專校特別篇》 -->
-
-                <span class="story-icon">📕</span>
-                <span class="story-title">才能專校特別篇 其一：緋紅回歸之『才能昇華』</span>
-                <span class="story-sub">點擊進入 · 作者Yun7044</span>
-            </div>
-            <!-- 預留科技感裝飾線條 -->
-        </div>
-        <div style="text-align: right; color: #0cf5; padding: 8px; font-size: 1rem; border-top: 1px solid #0cf3;">🔒 唯讀模式 · 編輯需授權</div>
-    </div>
-
-    <!-- 閱讀器畫面 (view 2) 預設隱藏 -->
-    <div id="reader-view" class="view hidden-view">
-        <div class="reader-header">
-            <div class="back-btn" id="back-to-shelf">⏎</div>
-            <div class="reader-title-area">
-                <div class="reader-title" id="reader-story-title">《才能專校特別篇 其一：緋紅回歸之『才能昇華』 》</div>
-                <div class="reader-author" id="reader-author-line">作者：Yun7044</div>
-            </div>
-            <!-- 作者工具按鈕（科技鎖） -->
-            <div class="author-tool-btn" id="author-tool-btn">⚙️🔓</div>
-        </div>
-
-        <!-- 小說內容顯示區 (保留換行與分隔線) -->
-        <div class="reader-special" id="story-special-display">
             （載入中...）
         </div>
 
@@ -866,29 +559,15 @@
 
 ——————————————`;
 
-const DEFAULT_STORY_SPECIAL = `預計2026年04月04號更新！敬請期待！`;
-
         // 資料儲存 key (localStorage)
         const STORAGE_KEY = 'caineng_novel_content';
 
-        const STORAGE_KEY2 = 'cainengspecial_novel_content';
-
         // 全域狀態
-        let currentStoryId = 'caineng';          // 第一部作品
+        let currentStoryId = 'caineng';          // 目前只有一部作品
         let stories = {
             caineng: {
                 id: 'caineng',
                 title: '《才能專校》',
-                author: 'Yun7044',
-                content: ''
-            }
-        };
-
-let currentStoryId2 = 'cainengspecial';          // 第二部作品
-        let stories2 = {
-            cainengsepcial: {
-                id: 'cainengspecial',
-                title: '《才能專校 特別篇 其一》\n\n緋紅回歸之『才能昇華』',
                 author: 'Yun7044',
                 content: ''
             }
@@ -902,7 +581,6 @@ let currentStoryId2 = 'cainengspecial';          // 第二部作品
         const bookcaseView = document.getElementById('bookcase-view');
         const readerView = document.getElementById('reader-view');
         const storyDisplay = document.getElementById('story-content-display');
-document.getElementById('story-special-display');
         const readerTitle = document.getElementById('reader-story-title');
         const readerAuthor = document.getElementById('reader-author-line');
         const backBtn = document.getElementById('back-to-shelf');
@@ -925,33 +603,14 @@ document.getElementById('story-special-display');
         }
         loadStoriesFromStorage();
 
-localStorage.getItem(STORAGE_KEY_2);
-            if (saved) {
-                stories2.cainengspecial.content = saved;
-            } else {
-                stories2.cainengspecial.content = DEFAULT_STORY_SPECIAL;
-            }
-        }
-        loadStoriesFromStorage();
-
         // ---------- 工具函數：儲存至 localStorage ----------
         function persistContent() {
             localStorage.setItem(STORAGE_KEY, stories.caineng.content);
-
-          localStorage.setItem(STORAGE_KEY2, stories2.cainengspecial.content);
-
         }
 
         // ---------- 更新閱讀器顯示內容 (依據 currentStoryId) ----------
         function refreshReaderContent() {
-            const story = stories.caineng;  // 第一個故事
-
-readerTitle.textContent = story.title;
-            readerAuthor.textContent = `作者：${story.author}`;
-            storyDisplay.textContent = story.content;
-
-            const story2 = stories2.cainengspecial; //第二個故事
-
+            const story = stories.caineng;  // 只有一個故事
             readerTitle.textContent = story.title;
             readerAuthor.textContent = `作者：${story.author}`;
             storyDisplay.textContent = story.content;
